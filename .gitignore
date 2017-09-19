@@ -63,3 +63,5 @@ typings/
 .gcc-flags.json
 .travis.yml
 platformio.ini
+lib/OTA/examples/BasicOTA.cpp
+lib/OTA/examples/OTALeds.cpp
