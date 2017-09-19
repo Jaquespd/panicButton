@@ -2,6 +2,12 @@
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <ESP8266HTTPClient.h>
+#include <FirebaseArduino.h>
+
+#define FIREBASE_HOST "myprojectdb-af8dd.firebaseio.com"
+#define FIREBASE_AUTH "g8xy5sX81rk1gvdYr9v0Pi8QtdfiS9KOWqUKCfL0"
+
 
 const char* ssid = "Jaques";
 const char* password = "Harien22";
@@ -14,6 +20,8 @@ void setup() {
   Serial.begin(115200);
   connectWifi ();
   beginOTA ();
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+
 
 }
 
@@ -50,17 +58,8 @@ void beginOTA () {
   // ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
 
   ArduinoOTA.onStart([]() {
-    String type;
-    if (ArduinoOTA.getCommand() == U_FLASH)
-      type = "sketch";
-    else // U_SPIFFS
-      type = "filesystem";
-
-    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-    Serial.println("Start updating " + type);
   });
   ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd");
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
@@ -74,4 +73,20 @@ void beginOTA () {
     else if (error == OTA_END_ERROR) Serial.println("End Failed");
   });
   ArduinoOTA.begin();
+}
+
+void sendTemp (float temp) {
+  // append a new value to /logs
+
+  String name = Firebase.pushFloat("temperature", temp);
+  // handle error
+  if (Firebase.failed()) {
+      Serial.print("pushing /temperature failed:");
+      Serial.println(Firebase.error());
+      return;
+  }
+  Serial.print("pushed: /temperature/");
+  Serial.print(name);
+  Serial.print(" : ");
+  Serial.println(temp);
 }
