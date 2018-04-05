@@ -1,24 +1,96 @@
+/*
+  HackEduca Divisão sem resto - 2 and 3 - DeBounced sketch
+ 
+ This sketch was created to show a debounce sketch when a button is pressed.
+ Sometimes pressing the button once, the microprocessor detects more than one press - so this program solve the issue
+-------------
+ Este exemplo foi criado para mostrar o efeito de Debounce, que é uma correção do Bounce(Repique) quando um botão é pressionado
+ Algumas vezes mesmo pressionando um botão (push button) uma única vez o Arduino interpreta mais de uma pressionada.
+ 
+ Created  21 Nov 2016
+ by Edson Sobreira
+ 
+This example code is in the public domain.
+ 
+It was initially inpired on Debounce program from Arduino IDE
+ */
+ 
+// Variables - Variáveis
+int ledPin = 7;       // the number of the LED Red pin  --  Pino onde o LED Vermelho está conectado
+int ledPin1 = 8;      // the pin that the LED Gren is attached to -- Pino onde o LED Verde está conectado
+int switchPin = 2;    // the number of the pushbutton pin - Pino onde o botão está conectado (Ligado com PullDown Resistor)
+ 
+int counter = 0;
+int currentState; 
+int lastState;
+int buttonState;     // the currentState from the input pin
+ 
+unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
+unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
+//---------------------------------------------
+void setup() {
+  pinMode(switchPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  pinMode(ledPin1, OUTPUT);
+  Serial.begin(9600);
+}
+//---------------------------------------------
+void loop() {
+  // read the state of the switch into a local variable:
+  // ler o valor atual do botão e coloca na variável currentState
+  int currentState = digitalRead(switchPin);
+ 
+//---
+// If the switch changed, due to noise or pressing:
+// Se o botão mudar de status por qualquer motivo é iniciado uma nova contagem
+  if (currentState != lastState) {
+      lastDebounceTime = millis();
+  }
+//--------
+//Verifica se o último toque no botão é superior ao valor do delay (50ms), definido na variável debounceDelay
+  if ((millis() - lastDebounceTime) > debounceDelay) {
         
-        //declarar variaveis abaixo e definir em configuracao
-        
-        int uID;
-        int nTipo;
-        int nData;
-        int nEstado;
-        int nProcedimento;
-        int nOperador;
-        int nTempoFechamento;
-        
-        
-        StaticJsonBuffer<200> jsonBuffer;
-        JsonObject& root = jsonBuffer.createObject();
-        root["id"] = nID;
-        root["tipo"] = nTipo;
-        root["data"] = nData;
-        root["estado"] = nEstado;
-        root["procedimento"] = nProcedimento;
-        root["operador"] = nOperador;
-        root["tempoFechamento"] = nTempoFechamento;
-        
-        // append a new value to /logDHT
-        String name = Firebase.push("/notice2", root);
+    if (currentState != buttonState) {
+      buttonState = currentState;
+ 
+//------------------------      
+      if (currentState == HIGH) {
+      counter++;
+     if (counter ==1) { 
+       Serial.print("O bot");
+       Serial.write(227);
+       Serial.print("o");
+       Serial.print(" foi pressionado ");
+       Serial.print(counter);
+       Serial.println(" vez");
+     } 
+      if (counter >>1) { 
+       Serial.print("O bot");
+       Serial.write(227);
+       Serial.print("o");
+       Serial.print(" foi pressionado ");
+       Serial.print(counter);
+       Serial.println(" vezes");
+     } 
+    }
+//--------------    
+   }
+  }
+ 
+//Atualiza o lastState para o a informação atual
+  lastState = currentState;
+ 
+// --- Execute the logic for gaming ---
+  if (counter % 2 == 0) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+ 
+    if (counter % 3 == 0) {
+    digitalWrite(ledPin1, HIGH);
+  } else {
+    digitalWrite(ledPin1, LOW);
+  }
+// --- End og logic ---  
+}
