@@ -1,7 +1,24 @@
+        
+        //declarar variaveis abaixo e definir em configuracao
+        
+        int uID;
+        int nTipo;
+        int nData;
+        int nEstado;
+        int nProcedimento;
+        int nOperador;
+        int nTempoFechamento;
+        
+        
         StaticJsonBuffer<200> jsonBuffer;
         JsonObject& root = jsonBuffer.createObject();
-        root["temperature"] = t;
-        root["humidity"] = h;
+        root["id"] = nID;
+        root["tipo"] = nTipo;
+        root["data"] = nData;
+        root["estado"] = nEstado;
+        root["procedimento"] = nProcedimento;
+        root["operador"] = nOperador;
+        root["tempoFechamento"] = nTempoFechamento;
         
         // append a new value to /logDHT
-        String name = Firebase.push("/sensor/dht", root);
+        String name = Firebase.push("/notice2", root);
